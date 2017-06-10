@@ -1,0 +1,66 @@
+# These files are text and should be normalized (Convert crlf => lf)
+*.php text
+*.css text
+*.js text
+*.htm text
+*.html text
+*.xml text
+*.txt text
+*.tml text
+*.ini text
+*.inc text
+.htaccess text
+
+# Auto detect text files and perform LF normalization
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+#* text=auto
+* text=lf
+
+# These files are binary and should be left untouched
+# (binary is a macro for -text -diff)
+#images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
+#audio video
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.ogv binary
+*.webm binary
+
+#archives
+*.gz binary
+*.zip binary
+*.7z binary
+
+#fonts
+*.ttf binary
+*.otf binary
+*.eot binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+
+ # Documents
+*.doc  diff=astextplain
+*.DOC  diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF  diff=astextplain
+*.rtf  diff=astextplain
+*.RTF  diff=astextplain
+
+# ued to remove files from deployment using `git archive`
+# git files
+.gitattributes export-ignore
+.gitignore export-ignore
