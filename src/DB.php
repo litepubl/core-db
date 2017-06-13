@@ -7,17 +7,17 @@ class DB implements DBInterface
     protected $adapter;
     protected $result;
     protected $sql;
-    protected $history;
+    protected $events;
     public $table;
     public $prefix;
 
-    public function __construct(AdapterInterface $adapter, string $prefix)
+    public function __construct(AdapterInterface $adapter, EventsInterface $events, string $prefix)
     {
         $this->adapter = $adapter;
+        $this->events = $events;
         $this->prefix = $prefix;
         $this->sql = '';
         $this->table = '';
-        $this->history = [];
     }
 
     public function getAdapter(): AdapterInterface
@@ -27,10 +27,6 @@ class DB implements DBInterface
 
     public function __get($name)
     {
-        if ($name == 'man') {
-            return DBManager::i();
-        }
-
         return $this->prefix . $name;
     }
 
@@ -42,62 +38,19 @@ class DB implements DBInterface
     public function query(string $sql)
     {
         $this->sql = $sql;
-        if (Config::$debug) {
-            $this->history[] = [
-                'sql' => $sql,
-                'time' => 0
-            ];
-            $microtime = microtime(true);
-        }
-
         if (is_object($this->result)) {
             $this->adapter->free($this->result);
         }
 
-        $this->result = $this->adapter->query($sql);
-
-        if ($this->result == false) {
-            $this->error($this->mysqli->error);
-        } elseif (Config::$debug) {
-            $this->history[count($this->history) - 1]['time'] = microtime(true) - $microtime;
-            if ($this->mysqli->warning_count
-                && ($r = $this->mysqli->query('SHOW WARNINGS'))
-                && $r->num_rows
-            ) {
-                $this->getApp()->getLogger()->warning($sql, $r->fetch_assoc());
-            }
+        $this->events->onQuery($sql);
+        try {
+                $this->result = $this->adapter->query($sql);
+                $this->events->onAfterQuery();
+        } catch (Exception $e) {
+                $this->events->onException($e);
         }
 
         return $this->result;
-    }
-
-    protected function error(string $mesg)
-    {
-        $mesg .= "\n$this->sql\n";
-        if (Config::$debug) {
-                $mesg .= $this->performance();
-        }
-
-        throw new DBException($mesg);
-    }
-
-    public function performance(): string
-    {
-        $result = '';
-        $total = 0.0;
-        $max = 0.0;
-                $maxsql = '';
-        foreach ($this->history as $i => $item) {
-            $result.= "$i: {$item['time']}\n{$item['sql']}\n\n";
-            $total+= $item['time'];
-            if ($max < $item['time']) {
-                $maxsql = $item['sql'];
-                $max = $item['time'];
-            }
-        }
-        $result.= "maximum $max\n$maxsql\n";
-        $result.= sprintf("%s total time\n%d querries\n\n", $total, count($this->history));
-        return $result;
     }
 
     public function quote($s): string
@@ -203,8 +156,8 @@ class DB implements DBInterface
 
     public function add(array $a)
     {
-        $res = $this->insertRow($this->assocToRow($a));
-        return $this->adapter->getLastId();
+        $this->insertRow($this->assocToRow($a));
+        return $this->adapter->getLastId($this->prefix . $this->table);
     }
 
     public function insert(array $a)

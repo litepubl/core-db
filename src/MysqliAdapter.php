@@ -2,7 +2,7 @@
 
 namespace LitePubl\Core\DB;
 
-class MySql implements AdapterInterface
+class MysqliAdapter implements AdapterInterface
 {
     protected $mysqli;
 
@@ -70,14 +70,32 @@ class MySql implements AdapterInterface
         return $res ? $res->num_rows : 0;
     }
 
-    public function getLastId($res)
+    public function getLastId(string $tableName, string $name = 'id_seq')
     {
         if ($result = $this->mysqli->insert_id) {
             return $result;
         }
 
-        $resId = $this->mysqli->query('select last_insert_id() from ' . $this->prefix . $this->table);
-        $r = $resId->fetch_row();
-        return (int)$r[0];
+        $res = $this->mysqli->query('select last_insert_id() from ' . $tableName);
+        $r = $res->fetch_row();
+        $res->close();
+        return $r[0];
+    }
+
+    public function beginTransaction()
+    {
+        $this->mysqli->autocommit(false);
+    }
+
+    public function commit()
+    {
+        $this->mysqli->commit();
+        $this->mysqli->autocommit(true);
+    }
+
+    public function rollback()
+    {
+        $this->mysqli->rollback();
+        $this->mysqli->autocommit(true);
     }
 }

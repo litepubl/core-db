@@ -17,18 +17,27 @@ class PDOAdapter implements AdapterInterface
     {
         return $this->pdo;
     }
+
+    public function exec(string $sql)
+    {
+        $result = $this->pdo->exec($sql);
+        if ($result === false) {
+            $info = $this->pdo->errorInfo();
+              throw new Exception($info[2]);
+        }
+
+        return $result;
+    }
   
     public function query(string $sql)
     {
         $result = $this->pdo->query($sql);
         if ($result === false) {
-              throw new Exception('Error db query');
+            $info = $this->pdo->errorInfo();
+              throw new Exception($info[2]);
         }
-    }
-  
-    public function exec(string $sql)
-    {
-        return $this->pdo->exec($sql);
+
+        return $result;
     }
   
     public function quote(string $s): string
@@ -64,11 +73,23 @@ class PDOAdapter implements AdapterInterface
         return $res ? $res->rowCount() : 0;
     }
 
-    public function getLastId($res)
+    public function getLastId(string $tableName, string $name = 'id_seq')
     {
-        $id = $this->pdo->lastInsertId('id');
-        if ($id) {
-            return $id;
-        }
+        return $this->pdo->lastInsertId($name);
+    }
+
+    public function beginTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->pdo->commit();
+    }
+
+    public function rollback()
+    {
+        $this->pdo->rollback();
     }
 }

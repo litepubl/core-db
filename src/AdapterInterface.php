@@ -13,5 +13,8 @@ interface AdapterInterface
     public function fetchRow($res);
     public function fetchAll($res): array;
     public function getCount($res): int;
-    public function getLastId($res);
+    public function getLastId(string $tableName, string $name = 'id_seq')
+    public function beginTransaction();
+    public function commit();
+    public function rollback();
 }
