@@ -7,10 +7,12 @@ use \PDO;
 class PDOAdapter implements AdapterInterface
 {
     protected $pdo;
+    protected $errorStrategy;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, ErrorStrategyInterface $errorStrategy)
     {
         $this->pdo = $pdo;
+        $this->errorStrategy = $errorStrategy;
     }
 
     public function getDriver()
@@ -23,7 +25,7 @@ class PDOAdapter implements AdapterInterface
         $result = $this->pdo->exec($sql);
         if ($result === false) {
             $info = $this->pdo->errorInfo();
-              throw new Exception($info[2]);
+            $this->errorStrategy->error($info[2], $sql);
         }
 
         return $result;
@@ -34,7 +36,7 @@ class PDOAdapter implements AdapterInterface
         $result = $this->pdo->query($sql);
         if ($result === false) {
             $info = $this->pdo->errorInfo();
-              throw new Exception($info[2]);
+            $this->errorStrategy->error($info[2], $sql);
         }
 
         return $result;

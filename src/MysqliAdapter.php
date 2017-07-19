@@ -5,10 +5,12 @@ namespace LitePubl\Core\DB;
 class MysqliAdapter implements AdapterInterface
 {
     protected $mysqli;
+    protected $errorStrategy;
 
-    public function __construct(\mysqli $mysqli)
+    public function __construct(\mysqli $mysqli, ErrorStrategyInterface $errorStrategy)
     {
         $this->mysqli = $mysqli;
+        $this->errorStrategy = $errorStrategy;
     }
 
     public function getDriver()
@@ -25,14 +27,12 @@ class MysqliAdapter implements AdapterInterface
     {
         $result = $this->mysqli->query($sql);
         if ($result == false) {
-            throw new Exception($this->mysqli->error);
-        }
-
-        if ($this->mysqli->warning_count
+            $this->errorStrategy->error($this->mysqli->error, $sql);
+        } elseif ($this->mysqli->warning_count
                 && ($r = $this->mysqli->query('SHOW WARNINGS'))
                 && $r->num_rows
             ) {
-            $this->warning($sql, $r->fetch_assoc());
+            $this->errorStrategy->warning($r[], $sql);
         }
 
         return $result;

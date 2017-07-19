@@ -32,10 +32,10 @@ class DB implements DBInterface
 
     public function exec(string $sql)
     {
-        return $this->adapter->exec($sql);
+        return $this->query($sql, false);
     }
 
-    public function query(string $sql)
+    public function query(string $sql, bool $isQuery = true)
     {
         $this->sql = $sql;
         if (is_object($this->result)) {
@@ -44,7 +44,12 @@ class DB implements DBInterface
 
         $this->events->onQuery($sql);
         try {
+            if ($isQuery) {
                 $this->result = $this->adapter->query($sql);
+            } else {
+                $this->result = $this->adapter->exec($sql);
+            }
+
                 $this->events->onAfterQuery();
         } catch (Exception $e) {
                 $this->events->onException($e);
