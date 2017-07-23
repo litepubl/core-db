@@ -2,14 +2,12 @@
 
 namespace LitePubl\Core\DB;
 
-use \PDO;
-
 class PDOAdapter implements AdapterInterface
 {
     protected $pdo;
     protected $errorStrategy;
 
-    public function __construct(PDO $pdo, ErrorStrategyInterface $errorStrategy)
+    public function __construct(\PDO $pdo, ErrorStrategyInterface $errorStrategy)
     {
         $this->pdo = $pdo;
         $this->errorStrategy = $errorStrategy;
@@ -56,17 +54,17 @@ class PDOAdapter implements AdapterInterface
 
     public function fetchAssoc($res)
     {
-        return $res ? $res->fetch(PDO::FETCH_ASSOC) : false;
+        return $res ? $res->fetch(\PDO::FETCH_ASSOC) : false;
     }
   
     public function fetchRow($res)
     {
-        return $res ? $res->fetch(PDO::FETCH_NUM) : false;
+        return $res ? $res->fetch(\PDO::FETCH_NUM) : false;
     }
 
     public function fetchAll($res): array
     {
-        return $res ? $res->fetchAll(PDO::FETCH_ASSOC) : [];
+        return $res ? $res->fetchAll(\PDO::FETCH_ASSOC) : [];
     }
 
   

@@ -1,6 +1,6 @@
 <?php
 
-namespace LitePubl\Core\DB;
+namespace LitePubl\Core\DB\Adapter;
 
 interface AdapterInterface
 {
@@ -13,7 +13,7 @@ interface AdapterInterface
     public function fetchRow($res);
     public function fetchAll($res): array;
     public function getCount($res): int;
-    public function getLastId(string $tableName, string $name = 'id_seq')
+    public function getLastId(string $tableName, string $name = 'id_seq');
     public function beginTransaction();
     public function commit();
     public function rollback();

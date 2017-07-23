@@ -1,6 +1,9 @@
 <?php
 
-namespace LitePubl\Core\DB;
+namespace LitePubl\Core\DB\Adapter;
+
+use LitePubl\Core\DB\Exception\Sql;
+use LogManager;
 
 class ErrorStrategy implements ErrorStrategyInterface
 {
@@ -13,7 +16,7 @@ class ErrorStrategy implements ErrorStrategyInterface
 
     public function error(string $message, string $sql)
     {
-        throw new SqlException($message, $sql);
+        throw new Sql($message, $sql);
     }
 
     public function warning(string $message, string $sql)

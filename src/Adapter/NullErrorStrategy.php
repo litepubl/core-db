@@ -1,6 +1,6 @@
 <?php
 
-namespace LitePubl\Core\DB;
+namespace LitePubl\Core\DB\Adapter;
 
 class NullErrorStrategy implements ErrorStrategyInterface
 {

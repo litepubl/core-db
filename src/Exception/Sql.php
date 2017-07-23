@@ -1,8 +1,8 @@
 <?php
 
-namespace LitePubl\Core\DB;
+namespace LitePubl\Core\DB\Exception;
 
-class SqlException extends \UnexpectedValueException
+class Sql extends \UnexpectedValueException
 {
     protected $sql;
 

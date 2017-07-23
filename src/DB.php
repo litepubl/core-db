@@ -2,6 +2,8 @@
 
 namespace LitePubl\Core\DB;
 
+use LitePubl\Core\DB\Adapter\AdapterInterface;
+
 class DB implements DBInterface
 {
     protected $adapter;
@@ -23,6 +25,11 @@ class DB implements DBInterface
     public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
+    }
+
+    public function getEvents(): EventsInterface
+    {
+        return $this->events;
     }
 
     public function __get($name)
@@ -68,7 +75,7 @@ class DB implements DBInterface
         return $this->adapter->quote($s);
     }
 
-    public function setTable($table)
+    public function setTable(string $table): DBInterface
     {
         $this->table = $table;
         return $this;

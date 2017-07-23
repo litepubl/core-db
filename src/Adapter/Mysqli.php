@@ -1,8 +1,8 @@
 <?php
 
-namespace LitePubl\Core\DB;
+namespace LitePubl\Core\DB\Adapter;
 
-class MysqliAdapter implements AdapterInterface
+class Mysqli implements AdapterInterface
 {
     protected $mysqli;
     protected $errorStrategy;
