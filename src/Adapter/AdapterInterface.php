@@ -5,6 +5,7 @@ namespace LitePubl\Core\DB\Adapter;
 interface AdapterInterface
 {
     public function getDriver();
+    public function withErrorStrategy(ErrorStrategy $errorStrategy): AdapterInterface;
     public function exec(string $sql);
     public function query(string $sql);
     public function quote(string $s): string;

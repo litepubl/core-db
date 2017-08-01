@@ -18,6 +18,11 @@ class Mysqli implements AdapterInterface
         return $this->mysqli;
     }
 
+    public function withErrorStrategy(ErrorStrategy $errorStrategy): AdapterInterface
+    {
+        return new static($this->mysqli, $errorStrategy);
+    }
+
     public function exec(string $sql)
     {
         return $this->query($sql);

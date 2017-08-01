@@ -373,7 +373,7 @@ class DB implements DBInterface
         return $this->adapter->fetchRow($res);
     }
 
-    public function countof($res)
+    public function getCountRows($res)
     {
         return $this->adapter->getCount($res);
     }

@@ -18,6 +18,11 @@ class PDOAdapter implements AdapterInterface
         return $this->pdo;
     }
 
+    public function withErrorStrategy(ErrorStrategy $errorStrategy): AdapterInterface
+    {
+        return new static($this->pdo, $errorStrategy);
+    }
+
     public function exec(string $sql)
     {
         $result = $this->pdo->exec($sql);
